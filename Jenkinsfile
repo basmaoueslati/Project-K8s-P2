@@ -1,6 +1,58 @@
 pipeline {
     agent any
+    environment {
+        REPO_URL = "git@github.com:basmaoueslati/trainingTests.git"  
+        BRANCH_NAME = "main"  // Update to your branch
+    }
     stages {
+        //Continuous Integration
+        stage('Calculate Version') {
+                    steps {
+                        script {
+                            // Read current version from POM
+                            CURRENT_VERSION = sh(
+                                script: 'mvn help:evaluate -Dexpression=revision -q -DforceStdout',
+                                returnStdout: true
+                            ).trim()
+                            
+                            // Parse and increment version
+                            def parts = CURRENT_VERSION.split('\\.')
+                            def newPatch = (parts[2] as Integer) + 1
+                            NEXT_VERSION = "${parts[0]}.${parts[1]}.${newPatch}"
+                            
+                            echo "Updating version: ${CURRENT_VERSION} → ${NEXT_VERSION}"
+        
+                        }
+                    }
+                }
+        // Set version in POM
+        stage('Set Version') {
+            steps {
+                sh "mvn versions:set-property -Dproperty=revision -DnewVersion=${NEXT_VERSION}"
+                sh "mvn versions:commit"
+                
+                sh """
+                # Configure Git user
+                git config --local user.email "basma.oueslati@gmail.com"
+                git config --local user.name "Jenkins"
+                
+                # Add and commit changes
+                git add pom.xml
+                git commit -m "Bump version to ${NEXT_VERSION}"
+                """
+            }
+        }
+        stage('Push Changes') {
+            steps {
+                sshagent(['github-ssh-key']) {  
+                    sh """
+                    git pull origin ${BRANCH_NAME} || true
+                    git push origin HEAD:${BRANCH_NAME}
+                    """
+                }
+            }
+        }
+     
         //Continuous Integration
         stage('Build') {
             steps {
@@ -12,12 +64,52 @@ pipeline {
                 sh 'mvn test'
             }
         }
+        stage('sonar analysis') {
+             steps {
+                withSonarQubeEnv ("SonarQube"){
+                   sh '''
+                       mvn clean verify sonar:sonar \
+                      -Dsonar.projectKey=compare-app \
+
+                       '''
+                    }
+                timeout(time: 15, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                    }
+                        }    
+        }
         //Continuous Delivery
-        stage('Docker Build&Push') {
+        stage('Upload to nexus'){
             steps {
-                withDockerRegistry(credentialsId: 'docker', url: "") {
-                    sh 'docker build -t basmaoueslati/compare-appf25 .'
-                    sh 'docker push basmaoueslati/compare-appf25'
+                nexusArtifactUploader artifacts: [
+                    [
+                        artifactId: 'numeric', classifier: '', 
+                        file: "target/numeric-${NEXT_VERSION}.jar",  
+                        type: 'jar'
+                    ]
+                ], 
+                credentialsId: 'nexus', 
+                groupId: 'com.devops', 
+                nexusUrl: '13.36.176.204:8081', 
+                nexusVersion: 'nexus3', 
+                protocol: 'http', 
+                repository: 'compare', 
+                version: "${NEXT_VERSION}" 
+            }
+        }
+        stage('Docker Build&Push via Ansible') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker',              
+                        usernameVariable: 'DOCKER_USERNAME', 
+                        passwordVariable: 'DOCKER_PASSWORD'  
+                    )
+                ]) {
+                    sh '''
+                        echo "Using Docker Hub user: $DOCKER_USERNAME"
+                        ansible-playbook playbook-delivery.yml -e build_context=${WORKSPACE}
+                    '''
                 }
             }
         }
