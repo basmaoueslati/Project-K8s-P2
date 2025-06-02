@@ -1,0 +1,19 @@
+---
+- name: Build and Push Docker Image
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Log in to Docker Hub
+      community.docker.docker_login:
+        username: "{{ lookup('env', 'DOCKER_USERNAME') }}"
+        password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
+
+    - name: Build and Push Docker image
+      community.docker.docker_image:
+        name: "basmaoueslati/compare-appf25"
+        tag: "v2"
+        source: build
+        build:
+          path: "{{ build_context }}"
+        push: yes
+        state: present
