@@ -1,0 +1,13 @@
+- name: Deploy compare-app on Kubernetes
+  hosts: localhost
+  vars:
+    ansible_python_interpreter: "/opt/ansible-env/bin/python"
+  collections:
+    - community.kubernetes
+  tasks:
+    - name: Apply Kubernetes 
+      k8s:
+        kubeconfig: ~/.kube/config
+        state: present
+        definition: "{{ lookup('file', 'compare-app.yaml') }}"
+        namespace: default
