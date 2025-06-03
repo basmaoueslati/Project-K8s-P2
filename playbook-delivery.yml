@@ -13,7 +13,7 @@
     - name: Build and Push Docker image
       community.docker.docker_image:
         name: "basmaoueslati/compare-appf25"
-        tag: "{{ image_tag }}"  # Strictly use NEXT_VERSION
+        tag: "{{ image_tag }}"
         source: build
         build:
           path: "{{ build_context }}"
