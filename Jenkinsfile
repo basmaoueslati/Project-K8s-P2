@@ -126,12 +126,14 @@ pipeline {
             }
         }
         //Continuous Deployment
-       stage('Run Ansible Playbook') {
-            steps {            
-                sh 'ansible-playbook -i inventory.ini playbook.yml'
-            
-        }
+stage('Run Ansible Playbook') {
+    steps {
+        sh """
+        sed -i 's|basmaoueslati/compare-appf25:.*|basmaoueslati/compare-appf25:${NEXT_VERSION}|g' compare-app.yaml
+        ansible-playbook -i inventory.ini playbook.yml
+        """
     }
+}
 
     }
 }
