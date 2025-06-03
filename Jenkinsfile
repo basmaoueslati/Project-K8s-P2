@@ -101,16 +101,20 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'docker',              
-                        usernameVariable: 'DOCKER_USERNAME', 
-                        passwordVariable: 'DOCKER_PASSWORD'  
+                        credentialsId: 'docker',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
-                    sh '''
-                        echo "Using Docker Hub user: $DOCKER_USERNAME"
-                        export NEXT_VERSION=${NEXT_VERSION}  # Pass NEXT_VERSION to Ansible
-                        ansible-playbook playbook-delivery.yml -e build_context=${WORKSPACE}
-                    '''
+                    script {
+                        // Explicitly pass NEXT_VERSION as an extra variable to Ansible
+                        sh """
+                            echo "Using Docker Hub user: \$DOCKER_USERNAME"
+                            ansible-playbook playbook-delivery.yml \
+                                -e build_context=\${WORKSPACE} \
+                                -e NEXT_VERSION=\${NEXT_VERSION}
+                        """
+                    }
                 }
             }
         }
