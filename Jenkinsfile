@@ -1,3 +1,5 @@
+@Library('your-shared-lib') _
+
 pipeline {
     agent any
     environment {
@@ -61,7 +63,10 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Build'
+                    )
                 }
             }
         }
@@ -71,11 +76,14 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Test'
+                    )
                 }
             }
         }
-        stage('sonar analysis') {
+        stage('Sonar Analysis') {
              steps {
                 withSonarQubeEnv ("SonarQube"){
                    sh '''
@@ -90,7 +98,10 @@ pipeline {
                         }
             post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Sonar Analysis'
+                    )
                 }
             }
         }
@@ -114,7 +125,10 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Upload to Nexus'
+                    )
                 }
             }
         }
@@ -140,7 +154,10 @@ pipeline {
             }
            post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Docker Build&Push via Ansible'
+                    )
                 }
             }
         }
@@ -157,7 +174,10 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Clean Old Docker Images on Local'
+                    )
                 }
             }
         }
@@ -171,7 +191,10 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification('oueslatibasma2020@gmail.com')
+                    sendStageNotification(
+                        recipient: 'oueslatibasma2020@gmail.com',
+                        stageName: 'Run Ansible Playbook'
+                    )
                 }
             }
 }
