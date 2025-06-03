@@ -20,5 +20,5 @@
       k8s:
         kubeconfig: ~/.kube/config
         state: present
-        definition: "{{ lookup('file', 'compare-app.yaml') }}"
+        definition: "{{ lookup('template', 'compare-app.yaml') | replace('{{ IMAGE_TAG }}', NEXT_VERSION) }}"
         namespace: default
