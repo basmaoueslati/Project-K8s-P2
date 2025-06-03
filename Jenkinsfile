@@ -108,6 +108,7 @@ pipeline {
                 ]) {
                     sh '''
                         echo "Using Docker Hub user: $DOCKER_USERNAME"
+                        export NEXT_VERSION=${NEXT_VERSION}  # Pass NEXT_VERSION to Ansible
                         ansible-playbook playbook-delivery.yml -e build_context=${WORKSPACE}
                     '''
                 }
