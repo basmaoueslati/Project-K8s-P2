@@ -90,7 +90,7 @@ pipeline {
                 ], 
                 credentialsId: 'nexus', 
                 groupId: 'com.devops', 
-                nexusUrl: '13.36.176.204:8081', 
+                nexusUrl: '51.44.221.164:8081', 
                 nexusVersion: 'nexus3', 
                 protocol: 'http', 
                 repository: 'compare', 
