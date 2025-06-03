@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   vars:
-    image_tag: "{{ NEXT_VERSION }}"  # Use NEXT_VERSION passed from Jenkins
+    image_tag: "{{ NEXT_VERSION }}"  # Remove `default('latest')` to enforce versioning
   tasks:
     - name: Log in to Docker Hub
       community.docker.docker_login:
@@ -13,9 +13,12 @@
     - name: Build and Push Docker image
       community.docker.docker_image:
         name: "basmaoueslati/compare-appf25"
-        tag: "{{ image_tag }}"  # Dynamic tag
+        tag: "{{ image_tag }}"  # Strictly use NEXT_VERSION
         source: build
         build:
           path: "{{ build_context }}"
         push: yes
         state: present
+
+    - name: Verify image was pushed
+      command: docker pull basmaoueslati/compare-appf25:{{ image_tag }}
