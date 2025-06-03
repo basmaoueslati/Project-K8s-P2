@@ -4,13 +4,7 @@ pipeline {
         REPO_URL = "git@github.com:basmaoueslati/trainingTests.git"  
         BRANCH_NAME = "main"  // Update to your branch
     }
-    def sendStageNotification() {
-        emailext(
-            subject: "${currentBuild.currentResult}: ${env.JOB_NAME} [${env.BUILD_NUMBER}] - ${env.STAGE_NAME}",
-            body: """Simple test email - Status: ${currentBuild.currentResult}""",
-            to: 'oueslatibasma2020@gmail.com'
-        )
-    }
+
     stages {
         //Continuous Integration
         stage('Calculate Version') {
@@ -67,7 +61,7 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
         }
@@ -77,7 +71,7 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
         }
@@ -96,7 +90,7 @@ pipeline {
                         }
             post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
         }
@@ -120,7 +114,7 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
         }
@@ -146,7 +140,7 @@ pipeline {
             }
            post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
         }
@@ -163,7 +157,7 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
         }
@@ -177,7 +171,7 @@ pipeline {
             }
             post {
                 always {
-                    sendStageNotification()
+                    sendStageNotification('oueslatibasma2020@gmail.com')
                 }
             }
 }
