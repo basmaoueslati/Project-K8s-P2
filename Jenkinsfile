@@ -3,7 +3,7 @@ pipeline {
     agent any
     environment {
         REPO_URL = "git@github.com:basmaoueslati/trainingTests.git"  
-        BRANCH_NAME = "main"  // Update to your branch
+        BRANCH_NAME = "main" 
     }
 
     stages {
