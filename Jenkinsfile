@@ -116,7 +116,7 @@ pipeline {
                 ], 
                 credentialsId: 'nexus', 
                 groupId: 'com.devops', 
-                nexusUrl: '35.180.71.148:8081', 
+                nexusUrl: '51.44.183.179:8081', 
                 nexusVersion: 'nexus3', 
                 protocol: 'http', 
                 repository: 'compare', 
