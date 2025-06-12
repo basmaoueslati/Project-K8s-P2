@@ -199,7 +199,7 @@ pipeline {
     }
         stage('Notification') {
             steps {
-                
+             echo "Sucess"   
             }
             post {
                 always {
