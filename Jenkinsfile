@@ -198,7 +198,9 @@ pipeline {
                 }
     }
         stage('Notification') {
-
+            steps {
+                
+            }
             post {
                 always {
                     sendStageNotification(
