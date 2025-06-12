@@ -141,9 +141,7 @@ pipeline {
                     )
                 ]) {
                     script {
-                        // Explicitly pass NEXT_VERSION as an extra variable to Ansible
                         sh """
-                            echo "NEXT_VERSION=${NEXT_VERSION}"  # Debug: Check if version is set
                             ansible-playbook playbook-delivery.yml \
                                 -e build_context=${WORKSPACE} \
                                 -e NEXT_VERSION=${NEXT_VERSION}
@@ -199,7 +197,7 @@ pipeline {
     }
         stage('Notification') {
             steps {
-             echo "Sucess"   
+             echo "Success"   
             }
             post {
                 always {
